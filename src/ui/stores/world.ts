@@ -1,61 +1,34 @@
 // engine/world.ts
 import { writable } from "svelte/store"
 import type { World } from "../../engine/types"
-import { create_default_world, spawn_unit } from "../../engine/world";
-import { add_unit_to_level, spawn_structure } from "../../engine/map/level";
+import { create_default_world, spawn_entity, spawn_player, spawn_room } from "../../engine/world";
+import { add_entity_to_room, connect_rooms } from "../../engine/map/room";
 
 const initial_world = create_default_world();
-const initial_level = initial_world.levels[1];
 
-const UNIT_HEIGHT_REF = 40;
+// rooms
+const room_a_id = spawn_room(initial_world, {
+    name: "Room A",
+    entities: [],
+    neighbors: []
+});
+const room_b_id = spawn_room(initial_world, {
+    name: "Room B",
+    entities: [],
+    neighbors: []
+});
+connect_rooms(initial_world, room_a_id, room_b_id);
 
-// Les personnages
-const unit_id_1 = spawn_unit(initial_world, {
-    name: "Rogue", pos: { x: 1, y: 1 }, max_stats: { hp: 30, mp: 9 }, scale: 1.0, shape: "sprite"
-})
-const unit_id_2 = spawn_unit(initial_world, {
-    name: "Summon", pos: { x: 3, y: 2 }, max_stats: { hp: 20, mp: 3 }, scale: 1.0, shape: "sprite"
-})
-
-add_unit_to_level(initial_level, unit_id_1);
-add_unit_to_level(initial_level, unit_id_2);
-
-// Les structures (Anciennement Slimes)
-spawn_structure(initial_level, {
-    name: "Sommet",
-    pos: { x: 5, y: 5 },
-    shape: "cube",
-    height: UNIT_HEIGHT_REF,
-    walkable: false
-})
-
-spawn_structure(initial_level, {
-    name: "Marche",
-    pos: { x: 5, y: 6 },
-    shape: "step",
-    height: UNIT_HEIGHT_REF,
-    walkable: false
-})
-spawn_structure(initial_level, {
-    name: "Marche",
-    pos: { x: 6, y: 5 },
-    shape: "step",
-    height: UNIT_HEIGHT_REF,
-    walkable: false
-})
-spawn_structure(initial_level, {
-    name: "Marche",
-    pos: { x: 4, y: 5 },
-    shape: "step",
-    height: UNIT_HEIGHT_REF,
-    walkable: false
-})
-spawn_structure(initial_level, {
-    name: "Marche",
-    pos: { x: 5, y: 4 },
-    shape: "step",
-    height: UNIT_HEIGHT_REF,
-    walkable: false
-})
+// entities
+const player_id = spawn_player(initial_world, {
+    name: "Player",
+    room: room_a_id,
+});
+const unit_2_id = spawn_entity(initial_world, {
+    name: "Summon",
+    room: room_a_id,
+});
+add_entity_to_room(initial_world, player_id, room_a_id);
+add_entity_to_room(initial_world, unit_2_id, room_a_id);
 
 export const world_store = writable<World>(initial_world)

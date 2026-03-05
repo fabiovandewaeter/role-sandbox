@@ -1,6 +1,17 @@
+<script lang="ts">
+    let l = ["a", "b", "c"];
+</script>
+
 <div class="right-panel">
-    <div class="inventory">Inventory</div>
-    <div class="logs">Logs</div>
+    <div class="inventory"><h2>Inventory</h2></div>
+    <div class="logs">
+        <h2>Logs</h2>
+        <ul>
+            {#each l as e}
+                <li>{e}</li>
+            {/each}
+        </ul>
+    </div>
 </div>
 
 <style>

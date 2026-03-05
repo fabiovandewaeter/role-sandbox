@@ -1,4 +1,4 @@
-<div class="navbar">Navbar</div>
+<div class="navbar"><h2>Navbar</h2></div>
 
 <style>
     .navbar {

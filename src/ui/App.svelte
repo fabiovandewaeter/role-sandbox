@@ -13,10 +13,6 @@
 </main>
 
 <style>
-  body {
-    margin: 0px;
-  }
-
   .app-container {
     display: grid;
     grid-template-columns: 200px 1fr 300px; /* nav | contenu | droite */
