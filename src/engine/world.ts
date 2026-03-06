@@ -18,15 +18,27 @@ export class World {
 
     get state() { return this._state; }
     get player_id() { return this._player_id }
+    get player(): Opt<Entity> {
+        return this._player_id.is_some()
+            ? this._entity_repo.get(this._player_id.value)
+            : none;
+    }
+    get current_room(): Opt<Room> {
+        let player_opt = this.player;
+        if (player_opt.is_none()) return none;
+        let player = player_opt.unwrap();
+
+        if (!player.room_id.is_some()) return none;
+        let room_id = player.room_id.value;
+        return this.get_room(room_id);
+    }
 
     // spawners
     // ========
-    /** spawn entity but fail if assignated room doesn't exist */
+    /** spawn entity AND move it to the room but fail if assignated room doesn't exist */
     spawn_entity(name: string, room_id: RoomId): Result<EntityId, string> {
-        // check if the room exists
         let room_res = this._room_repo.get_or_err(room_id);
         if (room_res.is_err()) return err(room_res.error);
-        // let room = room_res.unwrap();
 
         let entity_id_res = this._entity_repo.spawn(name, room_id);
         if (entity_id_res.is_err()) return err(entity_id_res.error);
@@ -37,7 +49,7 @@ export class World {
         return ok(entity_id);
     }
 
-    /** spawn entity but fail if assignated room doesn't exist */
+    /** spawn the player and set the world player as new player */
     spawn_player(name: string, room_id: RoomId): Result<EntityId, string> {
         let id_res = this.spawn_entity(name, room_id);
         if (id_res.is_err()) return err(id_res.error);

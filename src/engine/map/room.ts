@@ -17,17 +17,26 @@ export class Room {
 
     get id() { return this._id; }
     get name() { return this._name; }
+    get entities() { return this._entities; }
+    get neighbors() { return this._neighbors; }
 
     set name(name: string) { this._name = name; }
 
+    contains_entity(entity_id: EntityId): boolean {
+        const index = this._entities.indexOf(entity_id);
+        return index != -1;
+    }
+
     add_entity(entity_id: EntityId) {
-        this._entities.push(entity_id);
+        if (!this._entities.includes(entity_id)) {
+            this._entities.push(entity_id);
+        }
     }
 
     remove_entity(entity_id: EntityId): Result<void, string> {
         const index = this._entities.indexOf(entity_id);
         if (index == -1) return err(`Entity ${entity_id} not found in room ${this.id}`);
-        this._entities = this._entities.splice(index, 1);
+        this._entities.splice(index, 1);
         return ok(undefined);
     }
 

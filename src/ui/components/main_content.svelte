@@ -2,17 +2,15 @@
 <script lang="ts">
     import type { EntityId } from "../../engine/entities/entity";
     import type { RoomId } from "../../engine/map/room";
-    import { world_store } from "../stores/world";
+    import { world_store } from "../stores/world_store";
 
     $: world = $world_store;
-    $: entities = world.get_entities();
-    $: player = world.player != null ? world.entities[world.player] : undefined;
-    $: current_room =
-        player && player.room != null ? world.rooms[player.room] : undefined;
+    $: player_opt = world.player;
+    $: current_room_opt = world.current_room;
 
     function go_to_room(entity_id: EntityId, room_id: RoomId) {
         world_store.update((w) => {
-            w.move_entity(entity_id, room_id);
+            w.move_entity_to_room(entity_id, room_id);
             return w;
         });
     }
@@ -20,11 +18,15 @@
 
 <div class="main-content">
     <h2>Main Content</h2>
-    {#if player}
+    {#if player_opt.is_some() && current_room_opt.is_some()}
+        {@const player = player_opt.value}
+        {@const current_room = current_room_opt.value}
+        <h3>Current room:</h3>
+        {current_room.name}
         <h3>Entities here:</h3>
         <ul>
-            {#each current_room?.entities as e_id}
-                {@const entity = world.entities[e_id]}
+            {#each current_room.entities as e_id}
+                {@const entity = world.get_entity(e_id).unwrap()}
                 <li>{entity.name}</li>
             {/each}
         </ul>
@@ -32,7 +34,7 @@
         <h3>Available exists:</h3>
         <ul>
             {#each current_room?.neighbors ?? [] as n_id}
-                {@const room = world.rooms[n_id]}
+                {@const room = world.get_room(n_id).unwrap()}
                 <li>
                     <button
                         title="go_to_room {room}"
@@ -49,24 +51,10 @@
 
     <h3>TODO</h3>
     <ul>
-        <li>remplacer les undefined par Opt</li>
-        <li>
-            bien séparer
-            <ul>
-                <li>Entities / Rooms → données seulement</li>
-                <li>Repositories → accès aux données</li>
-                <li>Services → logique métier</li>
-                <li>World → agrégat / façade du domaine</li>
-                <li>
-                    SERVICES en dehors de World et juste fonctions appelées, pas
-                    besoin de faire de la composition si on a pas besoin d'état
-                </li>
-            </ul>
-        </li>
         <li>ajouter fichier avec text fr / en</li>
         <li>
-            voir UI main content avec: description room + entites présentes dans
-            une liste déroulante + options MAIS pas juste texte, faire avec
+            voir UI du main_content avec: description room + entites présentes
+            dans une liste déroulante + options MAIS pas juste texte, faire avec
             boutons - utiliser "player.room != null ?" au lieu de juste
             "player.room ?" car quand c'est index 0 ça retourne faux
         </li>
