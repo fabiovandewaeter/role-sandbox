@@ -1,7 +1,7 @@
 // engine/entity_repository.ts
 import { none, some, type Opt } from "../utils/option";
 import { err, ok, type Result } from "../utils/result";
-import type { EntityId, Entity } from "./types";
+import type { EntityId, Entity } from "./entity";
 
 export class EntityRepository {
     private next_id: any;
@@ -26,8 +26,15 @@ export class EntityRepository {
 
     delete(id: EntityId): Result<EntityId, string> {
         if (delete this.entities[id]) {
-            ok(id);
+            return ok(id);
         }
         return err(`Couldn't delete entity: ${id}`);
+    }
+
+    all_ids(): EntityId[] {
+        return Object.keys(this.entities).map(Number) as EntityId[];
+    }
+    all(): Entity[] {
+        return Object.values(this.entities);
     }
 }

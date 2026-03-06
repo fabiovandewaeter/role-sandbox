@@ -1,6 +1,6 @@
 <script lang="ts">
-    import type { EntityId } from "../../engine/entities/types";
-    import type { RoomId } from "../../engine/map/types";
+    import type { EntityId } from "../../engine/entities/entity";
+    import type { RoomId } from "../../engine/map/room";
     import { get_entities, get_rooms, move_entity } from "../../engine/world";
     import { world_store } from "../stores/world";
 
@@ -50,6 +50,17 @@
     <h3>TODO</h3>
     <ul>
         <li>remplacer les undefined par Opt</li>
+        <li>
+            bien séparer
+            <ul>
+            {#idjzaoidjzai odjzaoidjoiaz }
+                <li>Entities / Rooms → données seulement</li>
+                <li>Repositories → accès aux données</li>
+                <li>Services → logique métier</li>
+                <li>World → agrégat / façade du domaine</li>
+                <li>SERVICES en dehors de World et juste fonctions appelées, pas besoin de faire de la composition si on a pas besoin d'état</li>
+            </ul>
+        </li>
         <li>ajouter fichier avec text fr / en</li>
         <li>
             voir UI main content avec: description room + entites présentes dans

@@ -1,24 +1,37 @@
 // engine/utils/option.ts
-export type Opt<T> = Some<T> | None;
-export type Some<T> = { kind: "some"; value: T };
-export type None = { kind: "none" };
+// export type Opt<T> = Some<T> | None;
+// export type Some<T> = { kind: "some"; value: T };
+// export type None = { kind: "none" };
+export abstract class Opt<T> {
+    abstract is_some(): this is Some<T>;
+    abstract is_none(): this is None;
+    /** unwrap or throw (like Rust’s expect/unwrap) */
+    abstract unwrap(msg?: string): T;
+    /** unwrap with fallback */
+    abstract unwrap_or(fallback: T): T;
+    /** map over value if Some */
+    abstract map<U>(fn: (v: T) => U): Opt<U>;
+}
 
-export const some = <T>(value: T): Opt<T> => ({ kind: "some", value });
-export const none: Opt<never> = { kind: "none" };
+export class Some<T> extends Opt<T> {
+    constructor(public readonly value: T) { super(); }
 
-export const is_some = <T>(opt: Opt<T>): opt is Some<T> => opt.kind === "some";
-export const is_none = <T>(opt: Opt<T>): opt is None => opt.kind === "none";
+    is_some(): this is Some<T> { return true; }
+    is_none(): this is None { return false; }
+    unwrap(msg?: string): T { return this.value; }
+    unwrap_or(_: T): T { return this.value; }
+    map<U>(fn: (v: T) => U): Opt<U> { return new Some(fn(this.value)); }
+}
 
-/** unwrap with fallback */
-export const unwrap_or = <T>(opt: Opt<T>, fallback: T): T =>
-    is_some(opt) ? opt.value : fallback;
+export class None<T = never> extends Opt<T> {
+    constructor() { super() }
 
-/** unwrap or throw (like Rust’s expect/unwrap) */
-export const unwrap = <T>(opt: Opt<T>, msg?: string): T => {
-    if (is_some(opt)) return opt.value;
-    throw new Error(msg ?? "Tried to unwrap a None");
-};
+    is_some(): this is Some<T> { return false; }
+    is_none(): this is None { return true; }
+    unwrap(msg?: string): T { throw new Error(msg ?? "Tried to unwrap a None"); }
+    unwrap_or(fallback: T) { return fallback; }
+    map<U>(_: (v: T) => U): Opt<U> { return new None(); }
+}
 
-/** map over value if Some */
-export const map = <T, U>(opt: Opt<T>, fn: (v: T) => U): Opt<U> =>
-    is_some(opt) ? some(fn(opt.value)) : none;
+export const some = <T>(value: T): Opt<T> => new Some(value);
+export const none: Opt<never> = new None;

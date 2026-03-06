@@ -1,7 +1,7 @@
 // engine/room_repository.ts
 import { none, some, type Opt } from "../utils/option";
 import { err, ok, type Result } from "../utils/result";
-import type { RoomId, Room } from "./types";
+import { type RoomId, Room } from "./room";
 
 export class RoomRepository {
     private next_id: any;
@@ -17,17 +17,24 @@ export class RoomRepository {
     }
 
     /** spawn entity without room */
-    spawn(partial: Omit<Room, "id">): RoomId {
+    spawn(name: string): RoomId {
         const id: RoomId = this.next_id++;
-        const room: Room = { id, ...partial };
+        const room: Room = new Room(id, name);
         this.rooms[id] = room;
         return id;
     }
 
     delete(id: RoomId): Result<RoomId, string> {
         if (delete this.rooms[id]) {
-            ok(id);
+            return ok(id);
         }
         return err(`Couldn't delete room: ${id}`);
+    }
+
+    all_ids(): RoomId[] {
+        return Object.keys(this.rooms).map(Number) as RoomId[];
+    }
+    all(): Room[] {
+        return Object.values(this.rooms);
     }
 }

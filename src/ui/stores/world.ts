@@ -2,7 +2,7 @@
 import { writable } from "svelte/store"
 import type { World } from "../../engine/types"
 import { create_default_world, spawn_entity, spawn_player, spawn_room } from "../../engine/world";
-import { add_entity_to_room, connect_rooms } from "../../engine/map/room";
+import { add_entity_to_room, connect_rooms } from "../../engine/map/room_service";
 
 const initial_world = create_default_world();
 
