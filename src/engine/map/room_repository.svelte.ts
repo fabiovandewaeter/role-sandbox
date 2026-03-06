@@ -1,15 +1,13 @@
-// engine/room_repository.ts
+// engine/room_repository.svelte.ts
 import { none, some, type Opt } from "../utils/option";
 import { err, ok, type Result } from "../utils/result";
-import { type RoomId, Room } from "./room";
+import { type RoomId, Room } from "./room.svelte";
 
 export class RoomRepository {
-    private next_id: any;
-    private readonly rooms: Record<RoomId, Room> = {};
+    private next_id: any = $state(0);
+    private readonly rooms: Record<RoomId, Room> = $state({});
 
-    constructor() {
-        this.next_id = 0;
-    }
+    constructor() { }
 
     get(id: RoomId): Opt<Room> {
         const res = this.rooms[id];

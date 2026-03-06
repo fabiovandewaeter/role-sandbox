@@ -1,3 +1,4 @@
+<!-- ui/App.svelte -->
 <script lang="ts">
   import MainContent from "./components/main_content.svelte";
   import Navbar from "./components/navbar.svelte";

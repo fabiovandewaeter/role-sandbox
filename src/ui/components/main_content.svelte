@@ -1,33 +1,54 @@
 <!-- ui/components/main_content.svelte -->
 <script lang="ts">
-    import type { EntityId } from "../../engine/entities/entity";
-    import type { RoomId } from "../../engine/map/room";
-    import { world_store } from "../stores/world_store";
+    import type { EntityId } from "../../engine/entities/entity.svelte";
+    import type { RoomId } from "../../engine/map/room.svelte";
+    import { some } from "../../engine/utils/option";
+    import { ui_state } from "../states/ui_state.svelte";
+    import { world } from "../states/world_state.svelte";
 
-    $: world = $world_store;
-    $: player_opt = world.player;
-    $: current_room_opt = world.current_room;
+    // let world = $derived(world_state.world);
+    let player_opt = $derived(world.player);
+    let current_room_opt = $derived(world.current_room);
 
     function go_to_room(entity_id: EntityId, room_id: RoomId) {
-        world_store.update((w) => {
-            w.move_entity_to_room(entity_id, room_id);
-            return w;
-        });
+        world.move_entity_to_room(entity_id, room_id);
     }
 </script>
 
 <div class="main-content">
-    <h2>Main Content</h2>
+    <h2>Main content</h2>
     {#if player_opt.is_some() && current_room_opt.is_some()}
         {@const player = player_opt.value}
         {@const current_room = current_room_opt.value}
+
+        <button
+            title="TODO-delete-this-button"
+            onclick={() => world.spawn_entity("Summon", 0).unwrap()}
+            >spawn entity</button
+        >
+
+        <ul>
+            {#each world.get_entities() as e}
+                <li>{e.name}</li>
+            {/each}
+        </ul>
+
         <h3>Current room:</h3>
-        {current_room.name}
+        <div>{current_room.name}</div>
+
         <h3>Entities here:</h3>
         <ul>
             {#each current_room.entities as e_id}
                 {@const entity = world.get_entity(e_id).unwrap()}
-                <li>{entity.name}</li>
+                <li>
+                    <button
+                        title="select_entity_id"
+                        onclick={() =>
+                            (ui_state.selected_entity_id = some(entity.id))}
+                    >
+                        {entity.name}
+                    </button>
+                </li>
             {/each}
         </ul>
 
@@ -35,10 +56,11 @@
         <ul>
             {#each current_room?.neighbors ?? [] as n_id}
                 {@const room = world.get_room(n_id).unwrap()}
+
                 <li>
                     <button
                         title="go_to_room {room}"
-                        on:click={() => go_to_room(player.id, n_id)}
+                        onclick={() => go_to_room(player.id, n_id)}
                     >
                         {room.name}
                     </button>

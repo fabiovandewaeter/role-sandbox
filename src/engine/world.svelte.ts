@@ -1,16 +1,16 @@
-// engine/world.ts
-import { EntityRepository } from "./entities/entity_repository";
-import type { Entity, EntityId } from "./entities/entity";
+// engine/world.svelte.ts
+import { EntityRepository } from "./entities/entity_repository.svelte";
+import type { Entity, EntityId } from "./entities/entity.svelte";
 import { connect_rooms, move_entity_to_room } from "./map/room_service";
-import { RoomRepository } from "./map/room_repository";
-import type { Room, RoomId } from "./map/room";
+import { RoomRepository } from "./map/room_repository.svelte";
+import type { Room, RoomId } from "./map/room.svelte";
 import type { GameState } from "./types";
 import { Opt, none, some } from "./utils/option";
 import { Result, err, ok } from "./utils/result";
 
 export class World {
-    private _state: GameState = { mode: "explore" };
-    private _player_id: Opt<EntityId> = none;
+    private _state: GameState = $state({ mode: "explore" });
+    private _player_id: Opt<EntityId> = $state(none);
     private readonly _entity_repo: EntityRepository = new EntityRepository();
     private readonly _room_repo: RoomRepository = new RoomRepository();
 

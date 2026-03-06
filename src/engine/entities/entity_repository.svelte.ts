@@ -1,16 +1,14 @@
-// engine/entity_repository.ts
-import type { RoomId } from "../map/room";
+// engine/entity_repository.svelte.ts
+import type { RoomId } from "../map/room.svelte";
 import { none, some, type Opt } from "../utils/option";
 import { err, ok, type Result } from "../utils/result";
-import { type EntityId, Entity } from "./entity";
+import { type EntityId, Entity } from "./entity.svelte";
 
 export class EntityRepository {
-    private next_id: any;
-    private readonly entities: Record<EntityId, Entity> = {};
+    private next_id: any = $state(0);
+    private readonly entities: Record<EntityId, Entity> = $state({});
 
-    constructor() {
-        this.next_id = 0;
-    }
+    constructor() { }
 
     get(id: EntityId): Opt<Entity> {
         const res = this.entities[id];

@@ -1,10 +1,10 @@
 // engine/map/room.ts
-import type { EntityId } from "../entities/entity";
-import type { EntityRepository } from "../entities/entity_repository";
+import type { EntityId } from "../entities/entity.svelte";
+import type { EntityRepository } from "../entities/entity_repository.svelte";
 import { none, some } from "../utils/option";
 import { err, ok, type Result } from "../utils/result";
-import type { RoomId } from "./room";
-import type { RoomRepository } from "./room_repository";
+import type { RoomId } from "./room.svelte";
+import type { RoomRepository } from "./room_repository.svelte";
 
 export function move_entity_to_room(entity_id: EntityId, new_room_id: RoomId, room_repo: RoomRepository, entity_repo: EntityRepository): Result<void, string> {
     let new_room_res = room_repo.get_or_err(new_room_id);

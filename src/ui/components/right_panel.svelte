@@ -1,17 +1,24 @@
 <!-- ui/components/right_panel.svelte -->
 <script lang="ts">
-    let l = ["a", "b", "c"];
+    import { none } from "../../engine/utils/option";
+    import { ui_state } from "../states/ui_state.svelte";
+    import { world } from "../states/world_state.svelte";
+    import EntityDescription from "./entity_description.svelte";
+
+    let entity = $derived(
+        ui_state.selected_entity_id.is_some()
+            ? world.get_entity(ui_state.selected_entity_id.value)
+            : none,
+    );
 </script>
 
 <div class="right-panel">
-    <div class="inventory"><h2>Inventory</h2></div>
+    <div class="entity-description">
+        <EntityDescription selected_entity={entity} />
+    </div>
     <div class="logs">
         <h2>Logs</h2>
-        <ul>
-            {#each l as e}
-                <li>{e}</li>
-            {/each}
-        </ul>
+        <ul></ul>
     </div>
 </div>
 
@@ -21,12 +28,6 @@
         flex-direction: column;
         height: 100%;
         gap: 10px;
-    }
-
-    .inventory {
-        background-color: #6a6;
-        flex: 1; /* prend l'espace restant au dessus des logs */
-        padding: 10px;
     }
 
     .logs {

@@ -1,6 +1,6 @@
+// engine/utils/option.ts
 import { err, ok, type Result } from "./result";
 
-// engine/utils/option.ts
 export abstract class Opt<T> {
     abstract is_some(): this is Some<T>;
     abstract is_none(): this is None;
