@@ -8,6 +8,7 @@ export abstract class Opt<T> {
     abstract unwrap(msg?: string): T;
     /** unwrap with fallback */
     abstract unwrap_or(fallback: T): T;
+    abstract unwrap_or_null(): T | null;
     /** map over value if Some */
     abstract map<U>(fn: (v: T) => U): Opt<U>;
 
@@ -25,6 +26,7 @@ export class Some<T> extends Opt<T> {
     is_none(): this is None { return false; }
     unwrap(msg?: string): T { return this.value; }
     unwrap_or(_: T): T { return this.value; }
+    unwrap_or_null(): T | null { return this.value; }
     map<U>(fn: (v: T) => U): Opt<U> { return new Some(fn(this.value)); }
 }
 
@@ -35,6 +37,7 @@ export class None<T = never> extends Opt<T> {
     is_none(): this is None { return true; }
     unwrap(msg?: string): T { throw new Error(msg ?? "Tried to unwrap a None"); }
     unwrap_or(fallback: T) { return fallback; }
+    unwrap_or_null(): T | null { return null; }
     map<U>(_: (v: T) => U): Opt<U> { return new None(); }
 }
 

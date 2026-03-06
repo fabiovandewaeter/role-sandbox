@@ -1,17 +1,24 @@
 <!-- ui/components/entity_description.svelte -->
 <script lang="ts">
-    import { Entity } from "../../engine/entities/entity.svelte";
-    import type { Opt } from "../../engine/utils/option";
+    import { Entity, type EntityId } from "../../engine/entities/entity.svelte";
+    import { none, type Opt } from "../../engine/utils/option";
+    import { world } from "../states/world_state.svelte";
 
     interface Props {
-        selected_entity: Opt<Entity>;
+        selected_entity_id: Opt<EntityId>;
     }
 
-    let { selected_entity }: Props = $props();
+    let { selected_entity_id }: Props = $props();
+
+    let entity_opt: Opt<Entity> = $derived(
+        selected_entity_id.is_some()
+            ? world.get_entity(selected_entity_id.value)
+            : none,
+    );
 </script>
 
-{#if selected_entity.is_some()}
-    {@const entity = selected_entity.value}
+{#if entity_opt.is_some()}
+    {@const entity = entity_opt.value}
     <h3>Entity description:</h3>
     <ul>
         <li>{entity.id}</li>

@@ -1,20 +1,12 @@
 <!-- ui/components/right_panel.svelte -->
 <script lang="ts">
-    import { none } from "../../engine/utils/option";
     import { ui_state } from "../states/ui_state.svelte";
-    import { world } from "../states/world_state.svelte";
     import EntityDescription from "./entity_description.svelte";
-
-    let entity = $derived(
-        ui_state.selected_entity_id.is_some()
-            ? world.get_entity(ui_state.selected_entity_id.value)
-            : none,
-    );
 </script>
 
 <div class="right-panel">
     <div class="entity-description">
-        <EntityDescription selected_entity={entity} />
+        <EntityDescription selected_entity_id={ui_state.selected_entity_id} />
     </div>
     <div class="logs">
         <h2>Logs</h2>
