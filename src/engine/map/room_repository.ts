@@ -15,8 +15,11 @@ export class RoomRepository {
         const res = this.rooms[id];
         return res != null && res != undefined ? some(res) : none;
     }
+    get_or_err(id: RoomId, msg?: string): Result<Room, string> {
+        const room_opt = this.get(id);
+        return room_opt.is_some() ? ok(room_opt.value) : err(msg ?? `Room ${id} does not exist`);
+    }
 
-    /** spawn entity without room */
     spawn(name: string): RoomId {
         const id: RoomId = this.next_id++;
         const room: Room = new Room(id, name);

@@ -1,3 +1,4 @@
+<!-- ui/components/right_panel.svelte -->
 <script lang="ts">
     let l = ["a", "b", "c"];
 </script>

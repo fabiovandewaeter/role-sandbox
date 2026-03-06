@@ -1,7 +1,8 @@
 // engine/entity_repository.ts
+import type { RoomId } from "../map/room";
 import { none, some, type Opt } from "../utils/option";
 import { err, ok, type Result } from "../utils/result";
-import type { EntityId, Entity } from "./entity";
+import { type EntityId, Entity } from "./entity";
 
 export class EntityRepository {
     private next_id: any;
@@ -15,11 +16,15 @@ export class EntityRepository {
         const res = this.entities[id];
         return res != null && res != undefined ? some(res) : none;
     }
+    get_or_err(id: EntityId, msg?: string): Result<Entity, string> {
+        const entity_opt = this.get(id);
+        return entity_opt.is_some() ? ok(entity_opt.value) : err(msg ?? `Entity ${id} does not exist`);
+    }
 
     /** spawn entity without room */
-    spawn(partial: Omit<Entity, "id">): Result<EntityId, string> {
+    spawn(name: string, room_id: RoomId): Result<EntityId, string> {
         const id: EntityId = this.next_id++;
-        const entity: Entity = { id, ...partial };
+        const entity: Entity = new Entity(id, name, some(room_id));
         this.entities[id] = entity;
         return ok(id);
     }

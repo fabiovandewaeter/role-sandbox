@@ -1,7 +1,6 @@
+import { err, ok, type Result } from "./result";
+
 // engine/utils/option.ts
-// export type Opt<T> = Some<T> | None;
-// export type Some<T> = { kind: "some"; value: T };
-// export type None = { kind: "none" };
 export abstract class Opt<T> {
     abstract is_some(): this is Some<T>;
     abstract is_none(): this is None;
@@ -11,6 +10,12 @@ export abstract class Opt<T> {
     abstract unwrap_or(fallback: T): T;
     /** map over value if Some */
     abstract map<U>(fn: (v: T) => U): Opt<U>;
+
+    // helpers
+    /** usefull to get an error if is none */
+    ok_or<E = string>(error: E): Result<T, E> {
+        return this.is_some() ? ok(this.unwrap()) : err(error);
+    }
 }
 
 export class Some<T> extends Opt<T> {

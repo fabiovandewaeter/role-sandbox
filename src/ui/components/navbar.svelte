@@ -1,3 +1,4 @@
+<!-- ui/components/navbar.svelte -->
 <div class="navbar"><h2>Navbar</h2></div>
 
 <style>

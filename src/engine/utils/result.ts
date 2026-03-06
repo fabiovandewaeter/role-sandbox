@@ -1,8 +1,4 @@
 // engine/utils/result.ts
-// export type Result<T, E = string> = Ok<T> | Err<E>;
-// export type Ok<T> = { ok: true; value: T };
-// export type Err<E> = { ok: false; error: E };
-
 export abstract class Result<T, E = string> {
     abstract is_ok(): this is Ok<T, E>;
     abstract is_err(): this is Err<T, E>;
@@ -31,5 +27,5 @@ export class Err<T = never, E = string> extends Result<T, E> {
     map<U>(_: (val: T) => U): Result<U, E> { return new Err(this.error); }
 }
 
-export const ok = <T>(value: T) => new Ok(value);
-export const err = <E = string>(error: E) => new Err(error);
+export const ok = <T, E = string>(value: T): Ok<T, E> => new Ok(value);
+export const err = <E = string, T = never>(error: E): Err<T, E> => new Err(error);

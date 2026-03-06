@@ -6,28 +6,44 @@ export type RoomId = number;
 
 export class Room {
     /** entities in the current Room */
-    private entities: EntityId[] = [];
+    private _entities: EntityId[] = [];
     /** Rooms connected to this one */
-    private neighbors: RoomId[] = [];
+    private _neighbors: RoomId[] = [];
 
     constructor(
-        private readonly id: RoomId,
-        private name: string
+        private readonly _id: RoomId,
+        private _name: string
     ) { }
 
-    add_neighbor(neighbor_id: RoomId): Result<void, string> {
-        if (this.neighbors.includes(neighbor_id)) return err(`${neighbor_id} already is a neighbor of room ${this.id}`);
-        this.neighbors.push(neighbor_id);
+    get id() { return this._id; }
+    get name() { return this._name; }
+
+    set name(name: string) { this._name = name; }
+
+    add_entity(entity_id: EntityId) {
+        this._entities.push(entity_id);
+    }
+
+    remove_entity(entity_id: EntityId): Result<void, string> {
+        const index = this._entities.indexOf(entity_id);
+        if (index == -1) return err(`Entity ${entity_id} not found in room ${this.id}`);
+        this._entities = this._entities.splice(index, 1);
         return ok(undefined);
     }
 
-    remove_neighbor(neighbor_id: RoomId): boolean {
-        const index = this.neighbors.indexOf(neighbor_id);
+    add_neighbor(neighbor_id: RoomId): Result<void, string> {
+        if (this._neighbors.includes(neighbor_id)) return err(`${neighbor_id} already is a neighbor of room ${this.id}`);
+        this._neighbors.push(neighbor_id);
+        return ok(undefined);
+    }
+
+    remove_neighbor(neighbor_id: RoomId): Result<void, string> {
+        const index = this._neighbors.indexOf(neighbor_id);
 
         if (index !== -1) {
-            this.neighbors.splice(index, 1);
-            return true;
+            this._neighbors.splice(index, 1);
+            return err(`${neighbor_id} not found in room ${this._id}`);
         }
-        return false;
+        return ok(undefined);
     }
 }

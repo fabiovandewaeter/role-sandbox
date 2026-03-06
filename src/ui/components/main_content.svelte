@@ -1,18 +1,18 @@
+<!-- ui/components/main_content.svelte -->
 <script lang="ts">
     import type { EntityId } from "../../engine/entities/entity";
     import type { RoomId } from "../../engine/map/room";
-    import { get_entities, get_rooms, move_entity } from "../../engine/world";
     import { world_store } from "../stores/world";
 
     $: world = $world_store;
-    $: entities = get_entities(world);
+    $: entities = world.get_entities();
     $: player = world.player != null ? world.entities[world.player] : undefined;
     $: current_room =
         player && player.room != null ? world.rooms[player.room] : undefined;
 
     function go_to_room(entity_id: EntityId, room_id: RoomId) {
         world_store.update((w) => {
-            move_entity(w, entity_id, room_id);
+            w.move_entity(entity_id, room_id);
             return w;
         });
     }
@@ -53,12 +53,14 @@
         <li>
             bien séparer
             <ul>
-            {#idjzaoidjzai odjzaoidjoiaz }
                 <li>Entities / Rooms → données seulement</li>
                 <li>Repositories → accès aux données</li>
                 <li>Services → logique métier</li>
                 <li>World → agrégat / façade du domaine</li>
-                <li>SERVICES en dehors de World et juste fonctions appelées, pas besoin de faire de la composition si on a pas besoin d'état</li>
+                <li>
+                    SERVICES en dehors de World et juste fonctions appelées, pas
+                    besoin de faire de la composition si on a pas besoin d'état
+                </li>
             </ul>
         </li>
         <li>ajouter fichier avec text fr / en</li>
