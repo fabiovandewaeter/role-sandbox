@@ -30,6 +30,7 @@ export const attack_action: CombatAction = {
         const target = target_res.unwrap();
 
         target.current_stats.hp -= source.current_stats.attack;
+        console.log(target.current_stats);
         combat.advance_turn();
         return ok(undefined);
     }

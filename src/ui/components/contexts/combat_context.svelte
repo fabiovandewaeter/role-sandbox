@@ -8,6 +8,8 @@
     import { none, Opt, some } from "../../../engine/utils/option";
     import { world } from "../../lib/world_controller";
     import { ui_state } from "../../states/ui_state.svelte";
+    import CombatantDescription from "../combatant_description.svelte";
+    import EntityDescription from "../entity_description.svelte";
 
     let combat_opt: Opt<Combat> = $derived(
         world.state.mode === "combat" ? some(world.state.combat) : none,
@@ -82,12 +84,14 @@
                             world,
                             combat,
                             source_id: current_combatant.entity_id,
+                            target_id: ui_state.selected_entity_id.unwrap(),
                         })}
                 >
                     {action.id}
                 </button>
             {/each}
         {/if}
+        <CombatantDescription {combat} />
     {:else}
         <p>no current combatant</p>
     {/if}
