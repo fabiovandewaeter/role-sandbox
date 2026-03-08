@@ -1,8 +1,10 @@
 // engine/entity_repository.svelte.ts
+import type { Interaction } from "../intractions/interaction";
 import type { RoomId } from "../map/room.svelte";
 import { none, some, type Opt } from "../utils/option";
 import { err, ok, type Result } from "../utils/result";
 import { type EntityId, Entity } from "./entity.svelte";
+import { DEFAULT_ENTITY_INTERACTIONS } from "./entity_interaction";
 
 export class EntityRepository {
     private next_id: any = $state(0);
@@ -19,10 +21,10 @@ export class EntityRepository {
         return entity_opt.is_some() ? ok(entity_opt.value) : err(msg ?? `Entity ${id} does not exist`);
     }
 
-    /** spawn entity without room */
-    spawn(name: string, room_id: RoomId): Result<EntityId, string> {
+    spawn(name: string, room_id: RoomId, extra_interactions: Interaction[] = []): Result<EntityId, string> {
         const id: EntityId = this.next_id++;
         const entity: Entity = new Entity(id, name, some(room_id));
+        entity.interactions = [...DEFAULT_ENTITY_INTERACTIONS, ...extra_interactions];
         this.entities[id] = entity;
         return ok(id);
     }

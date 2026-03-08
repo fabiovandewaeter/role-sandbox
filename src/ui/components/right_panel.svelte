@@ -5,9 +5,7 @@
 </script>
 
 <div class="right-panel">
-    <div class="entity-description">
-        <EntityDescription selected_entity_id={ui_state.selected_entity_id} />
-    </div>
+    <EntityDescription selected_entity_id={ui_state.selected_entity_id} />
     <div class="logs">
         <h2>Logs</h2>
         <ul></ul>

@@ -3,12 +3,13 @@
     import type { EntityId } from "../../engine/entities/entity.svelte";
     import type { RoomId } from "../../engine/map/room.svelte";
     import { some } from "../../engine/utils/option";
+    import { world } from "../lib/world_controller";
     import { ui_state } from "../states/ui_state.svelte";
-    import { world } from "../states/world_state.svelte";
 
     // let world = $derived(world_state.world);
     let player_opt = $derived(world.player);
     let current_room_opt = $derived(world.current_room);
+    let current_game_state = $derived(world.state.mode);
 
     function go_to_room(entity_id: EntityId, room_id: RoomId) {
         world.move_entity_to_room(entity_id, room_id);
@@ -16,6 +17,13 @@
 </script>
 
 <div class="main-content">
+    <p>Current game state: {current_game_state}</p>
+    <button
+        title="t"
+        onclick={() => (world.state = { mode: "trade", target_id: 1 })}
+    >
+        start trade
+    </button>
     <h2>Main content</h2>
     {#if player_opt.is_some() && current_room_opt.is_some()}
         {@const player = player_opt.value}

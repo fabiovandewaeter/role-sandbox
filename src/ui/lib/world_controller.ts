@@ -1,4 +1,4 @@
-// ui/states/world_state.svelte.ts
+// ui/states/world_controller.ts
 import { World } from "../../engine/world.svelte";
 
 const world = new World();
