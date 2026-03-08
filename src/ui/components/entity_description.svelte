@@ -4,6 +4,7 @@
     import { none, type Opt } from "../../engine/utils/option";
     import { world } from "../lib/world_controller";
     import { ui_state } from "../states/ui_state.svelte";
+    import Stats from "./stats.svelte";
 
     let player_opt = $derived(world.player);
 
@@ -39,10 +40,8 @@
                 >
             {/each}
         </ul>
+        <Stats stats={entity.max_stats} />
     {:else}
         <p>No entity selected or player spawned</p>
     {/if}
 </div>
-
-<style>
-</style>

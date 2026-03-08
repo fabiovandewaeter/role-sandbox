@@ -4,11 +4,25 @@ import type { EntityRepository } from "../entities/entity_repository.svelte";
 import { none, some, type Opt } from "../utils/option";
 import { DEFAULT_COMBAT_ACTIONS, type CombatAction } from "./combat_action";
 
+export type Combatant = {
+    entity_id: EntityId,
+    /** current hp, mana... ; doesn't affect entity's max stats */
+    current_stats: Stats,
+    is_dead: boolean,
+    actions: CombatAction[],
+}
+
+export enum CombatState {
+    PlayerWon = "player won",
+    EnemyWon = "enemy won",
+    NotFinished = "not finished",
+}
+
 export class Combat {
     player_team: Combatant[] = $state([]);
     enemy_team: Combatant[] = $state([]);
     turn_order: EntityId[] = $state([]);
-    current_turn_index: number = $state(0);
+    current_combatant_id: EntityId = $state(0);
 
     constructor(
         player_team: Combatant[],
@@ -17,10 +31,16 @@ export class Combat {
         this.player_team = player_team;
         this.enemy_team = enemy_team;
         this.turn_order = [...player_team.map(c => c.entity_id), ...enemy_team.map(c => c.entity_id)];
+        this.current_combatant_id = this.turn_order[0];
     }
 
-    get current_combatant_id(): EntityId {
-        return this.turn_order[this.current_turn_index];
+    get current_turn_index(): number {
+        return this.turn_order.indexOf(this.current_combatant_id);
+    }
+    get combat_state(): CombatState {
+        if (this.player_team.every(c => c.is_dead)) return CombatState.EnemyWon;
+        if (this.enemy_team.every(c => c.is_dead)) return CombatState.PlayerWon;
+        return CombatState.NotFinished;
     }
 
     get_combatant(entity_id: EntityId): Opt<Combatant> {
@@ -31,22 +51,35 @@ export class Combat {
         return none;
     }
 
-    advance_turn() {
-        this.current_turn_index = (this.current_turn_index + 1) % this.turn_order.length;
-    }
-}
+    advance_turn(): CombatState {
+        this.kill_dead_entities();
 
-export type Combatant = {
-    entity_id: EntityId,
-    /** current hp, mana... ; doesn't affect entity's max stats */
-    current_stats: Stats,
-    actions: CombatAction[],
+        const result = this.combat_state;
+        if (result !== CombatState.NotFinished) return result;
+
+        // sync current_combatant_id
+        const current_index = this.turn_order.indexOf(this.current_combatant_id);
+        const next_index = (current_index + 1) % this.turn_order.length;
+        this.current_combatant_id = this.turn_order[next_index];
+
+        return CombatState.NotFinished;
+    }
+
+    /** set the Combatant.is_dead = true if not enough hp and removes them from this.turn_order */
+    kill_dead_entities() {
+        // kill dead entities
+        this.player_team.forEach(c => { if (c.current_stats.hp <= 0) c.is_dead = true; });
+        this.enemy_team.forEach(c => { if (c.current_stats.hp <= 0) c.is_dead = true; });
+        // find dead entities in turn_order and removes them
+        this.turn_order = this.turn_order.filter(id => !this.get_combatant(id).unwrap().is_dead);
+    }
 }
 
 export function combatant_from_entity(entity: Entity): Combatant {
     return {
         entity_id: entity.id,
         current_stats: entity.max_stats,
+        is_dead: false,
         actions: [...DEFAULT_COMBAT_ACTIONS]
     }
 }
