@@ -2,62 +2,38 @@
 <script lang="ts">
     import type { EntityId } from "../../../engine/entities/entity.svelte";
     import type { RoomId } from "../../../engine/map/room.svelte";
-    import { some } from "../../../engine/utils/option";
+    import { none, some } from "../../../engine/utils/option";
     import { world } from "../../lib/world_controller";
     import { ui_state } from "../../states/ui_state.svelte";
+    import EntityDescription from "../entity_description.svelte";
 
-    // let world = $derived(world_state.world);
     let player_opt = $derived(world.player);
     let current_room_opt = $derived(world.current_room);
 
     function go_to_room(entity_id: EntityId, room_id: RoomId) {
         world.move_entity_to_room(entity_id, room_id);
+        ui_state.selected_entity_id = none;
     }
 </script>
 
 <h2>Explore mode</h2>
-
-<button
-    title="switch-to-combat-mode"
-    onclick={() =>
-        (world.state = {
-            mode: "combat",
-            player_team_ids: [0],
-            enemy_team_ids: [1],
-        })}
->
-    switch to combat mode
-</button>
-<button
-    title="switch-to-dialogue-mode"
-    onclick={() =>
-        (world.state = {
-            mode: "dialogue",
-            target_id: 1,
-        })}
->
-    switch to dialogue mode
-</button>
-<button
-    title="switch-to-trade-mode"
-    onclick={() =>
-        (world.state = {
-            mode: "trade",
-            target_id: 1,
-        })}
->
-    switch to trade mode
-</button>
 {#if player_opt.is_some() && current_room_opt.is_some()}
     {@const player = player_opt.value}
     {@const current_room = current_room_opt.value}
 
     <button
-        title="TODO-delete-this-button"
-        onclick={() => world.spawn_entity("Summon", 0).unwrap()}
-        >spawn entity</button
+        title="TODO-delete-this-button-that-spawn-an-entity"
+        onclick={() =>
+            world
+                .spawn_entity("Summon", current_room.id, {
+                    hp: 10,
+                    mana: 100,
+                    attack: 10,
+                })
+                .unwrap()}>spawn entity</button
     >
 
+    <h3>All entities:</h3>
     <ul>
         {#each world.get_entities() as e}
             <li>{e.name}</li>
@@ -69,7 +45,7 @@
 
     <h3>Entities here:</h3>
     <ul>
-        {#each current_room.entities as e_id}
+        {#each current_room.get_entities_without_player(player.id) as e_id}
             {@const entity = world.get_entity(e_id).unwrap()}
             <li>
                 <button
@@ -98,6 +74,7 @@
             </li>
         {/each}
     </ul>
+    <EntityDescription />
 {:else}
     <p>The player is not set</p>
 {/if}

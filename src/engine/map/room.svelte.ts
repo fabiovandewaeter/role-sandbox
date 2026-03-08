@@ -15,6 +15,8 @@ export class Room {
         this.name = name;
     }
 
+    get_entities_without_player(player_id: EntityId) { return this.entities.filter(e_id => e_id !== player_id); }
+
     contains_entity(entity_id: EntityId): boolean {
         const index = this.entities.indexOf(entity_id);
         return index != -1;

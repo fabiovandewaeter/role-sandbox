@@ -1,11 +1,8 @@
 <!-- ui/components/right_panel.svelte -->
 <script lang="ts">
-    import { ui_state } from "../states/ui_state.svelte";
-    import EntityDescription from "./entity_description.svelte";
 </script>
 
 <div class="right-panel">
-    <EntityDescription selected_entity_id={ui_state.selected_entity_id} />
     <div class="logs">
         <h2>Logs</h2>
         <ul></ul>

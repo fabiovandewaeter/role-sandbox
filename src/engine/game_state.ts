@@ -1,9 +1,11 @@
 // engine/game_state.ts
-import type { EntityId } from "./entities/entity.svelte"
+import type { Combat } from "./combats/combat.svelte"
+import type { Dialogue } from "./dialogues/dialogue.svelte"
+import type { Trade } from "./trades/trade.svelte"
 
 export type GameState = ExploreState | CombatState | DialogueState | TradeState
 
 export type ExploreState = { mode: "explore" }
-export type CombatState = { mode: "combat", player_team_ids: EntityId[], enemy_team_ids: EntityId[] }
-export type DialogueState = { mode: "dialogue", target_id: EntityId }
-export type TradeState = { mode: "trade", target_id: EntityId }
+export type CombatState = { mode: "combat", combat: Combat }
+export type DialogueState = { mode: "dialogue", dialogue: Dialogue }
+export type TradeState = { mode: "trade", trade: Trade }

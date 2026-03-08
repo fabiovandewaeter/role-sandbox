@@ -1,19 +1,19 @@
 // engine/world.svelte.ts
 import { EntityRepository } from "./entities/entity_repository.svelte";
-import type { Entity, EntityId } from "./entities/entity.svelte";
+import type { Entity, EntityId, Stats } from "./entities/entity.svelte";
 import { connect_rooms, move_entity_to_room } from "./map/room_service";
 import { RoomRepository } from "./map/room_repository.svelte";
 import type { Room, RoomId } from "./map/room.svelte";
 import type { GameState } from "./game_state";
 import { Opt, none, some } from "./utils/option";
 import { Result, err, ok } from "./utils/result";
-import { start_combat, start_dialogue, start_trade } from "./entities/entity_interaction";
+import { type EntityInteraction, start_combat, start_dialogue, start_trade } from "./entities/entity_interaction";
 
 export class World {
     private _state: GameState = $state({ mode: "explore" });
     private player_id: Opt<EntityId> = $state(none);
-    private readonly entity_repo: EntityRepository = new EntityRepository();
-    private readonly room_repo: RoomRepository = new RoomRepository();
+    readonly entity_repo: EntityRepository = new EntityRepository();
+    readonly room_repo: RoomRepository = new RoomRepository();
 
     constructor() { }
 
@@ -38,11 +38,11 @@ export class World {
     // spawners
     // ========
     /** spawn entity AND move it to the room but fail if assignated room doesn't exist */
-    spawn_entity(name: string, room_id: RoomId): Result<EntityId, string> {
+    spawn_entity(name: string, room_id: RoomId, max_stats: Stats, extra_interactions: EntityInteraction[] = []): Result<EntityId, string> {
         let room_res = this.room_repo.get_or_err(room_id);
         if (room_res.is_err()) return err(room_res.error);
 
-        let entity_id_res = this.entity_repo.spawn(name, room_id);
+        let entity_id_res = this.entity_repo.spawn(name, room_id, max_stats, extra_interactions);
         if (entity_id_res.is_err()) return err(entity_id_res.error);
         let entity_id = entity_id_res.unwrap();
 
@@ -52,8 +52,8 @@ export class World {
     }
 
     /** spawn the player and set the world player as new player */
-    spawn_player(name: string, room_id: RoomId): Result<EntityId, string> {
-        let id_res = this.spawn_entity(name, room_id);
+    spawn_player(name: string, room_id: RoomId, max_stats: Stats, extra_interactions: EntityInteraction[] = []): Result<EntityId, string> {
+        let id_res = this.spawn_entity(name, room_id, max_stats, extra_interactions);
         if (id_res.is_err()) return err(id_res.error);
         let id = id_res.unwrap();
         this.set_player(id);
