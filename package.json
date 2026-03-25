@@ -12,13 +12,13 @@
     "deploy": "gh-pages -d dist && cd dist/ && zip -r ../role-sandbox.zip ./* && cd .."
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^6.2.1",
-    "@tsconfig/svelte": "^5.0.6",
-    "@types/node": "^24.10.1",
-    "gh-pages": "^6.3.0",
-    "svelte": "^5.45.2",
-    "svelte-check": "^4.3.4",
-    "typescript": "~5.9.3",
-    "vite": "^7.3.1"
+    "@sveltejs/vite-plugin-svelte": "6.2.1",
+    "@tsconfig/svelte": "5.0.6",
+    "@types/node": "24.10.1",
+    "gh-pages": "6.3.0",
+    "svelte": "5.45.2",
+    "svelte-check": "4.3.4",
+    "typescript": "5.9.3",
+    "vite": "7.3.1"
   }
 }
