@@ -28,4 +28,8 @@ world.spawn_entity(
     }
 ).unwrap();
 
+setInterval(() => {
+    world.update();
+}, 5000);
+
 export { world };

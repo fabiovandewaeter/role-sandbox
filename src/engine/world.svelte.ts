@@ -96,6 +96,10 @@ export class World {
 
     // other
     // ======
+    update() {
+        console.log("Update");
+    }
+
     move_entity_to_room(entity_id: EntityId, room_id: RoomId): Result<void, string> {
         return move_entity_to_room(entity_id, room_id, this.room_repo, this.entity_repo);
     }
@@ -106,7 +110,7 @@ export class World {
 
     // interactions
     // ============
-    start_combat(player_team_ids: EntityId[], enemy_team_ids: EntityId[]): Result<void, string> { return start_combat(this, player_team_ids, enemy_team_ids); }
-    start_dialogue(source_id: EntityId, target_id: EntityId): Result<void, string> { return start_dialogue(this, source_id, target_id); }
-    start_trade(source_id: EntityId, target_id: EntityId): Result<void, string> { return start_trade(this, source_id, target_id); }
+    start_combat(player_team_ids: EntityId[], enemy_team_ids: EntityId[]): void { return start_combat(this, player_team_ids, enemy_team_ids); }
+    start_dialogue(source_id: EntityId, target_id: EntityId): void { return start_dialogue(this, source_id, target_id); }
+    start_trade(source_id: EntityId, target_id: EntityId): void { return start_trade(this, source_id, target_id); }
 }

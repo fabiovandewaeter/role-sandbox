@@ -1,7 +1,7 @@
 // engine/entities/types.svelte.ts
-import type { EntityInteraction, EntityInteractionContext } from "../intractions/interaction";
 import type { RoomId } from "../map/room.svelte"
 import { type Opt } from "../utils/option"
+import type { EntityInteraction } from "./entity_interaction";
 
 export type EntityId = number
 

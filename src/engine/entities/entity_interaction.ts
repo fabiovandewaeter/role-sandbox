@@ -15,30 +15,30 @@ export type EntityInteraction = {
     id: string,
     /** exemple: visible only if player has a certain item ... */
     available?: (ctx: EntityInteractionContext) => boolean,
-    execute: (ctx: EntityInteractionContext) => Result<void, string>,
+    execute: (ctx: EntityInteractionContext) => void,
 }
 
 export const combat_interaction: EntityInteraction = {
     id: "combat",
-    execute: ({ world, source_id, target_id }): Result<void, string> => {
+    execute: ({ world, source_id, target_id }): void => {
         // spawn other entities if needed in the combat
         const player_team_ids = [source_id];
         const enemy_team_ids = [target_id];
-        return world.start_combat(player_team_ids, enemy_team_ids);
+        world.start_combat(player_team_ids, enemy_team_ids);
     }
 }
 
 export const dialogue_interaction: EntityInteraction = {
     id: "dialogue",
-    execute: ({ world, source_id, target_id }): Result<void, string> => {
-        return world.start_dialogue(source_id, target_id);
+    execute: ({ world, source_id, target_id }): void => {
+        world.start_dialogue(source_id, target_id);
     }
 }
 
 export const trade_interaction: EntityInteraction = {
     id: "trade",
-    execute: ({ world, source_id, target_id }): Result<void, string> => {
-        return world.start_trade(source_id, target_id);
+    execute: ({ world, source_id, target_id }): void => {
+        world.start_trade(source_id, target_id);
     }
 }
 
